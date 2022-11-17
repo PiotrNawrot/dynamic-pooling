@@ -1,0 +1,60 @@
+text8: &text8
+   dataset: text8
+   data: data/text8
+
+model: &model
+   d_model: 512
+   n_head: 8
+   d_head: 64
+   d_inner: 2048
+   dropout: 0.1
+   dropatt: 0.1
+   pre_lnorm: false
+   model_config: "[2, (8,), 2]"
+   activation_function: gelu
+   shuffle: true
+   roll: true
+   nw: 8
+   fp16: true 
+
+boundaries: &boundaries
+   boundaries_type: 'whitespaces'
+   tokenizer_path: './tokenizer_data/spm/text8'
+   fixed_sf: 2
+   spikes_left: 2
+   temp: 0.5
+   prior: 0.2
+
+eval: &eval
+   eval_interval: 10000
+   eval_max_steps: 500
+   eval_tgt_len: 512
+   eval_total_len: 2048
+
+optim: &optim
+   optim: adam
+   scheduler: cosine
+   lr: 0.00025
+   warmup_step: 4000
+   clip: 0.25
+   weight_decay: 0
+   adam_b1: 0.9
+   adam_b2: 0.999
+   adam_eps: 1e-8
+
+train: &train
+   cuda: true
+   max_step: 200000
+   tgt_len: 2048
+   batch_size: 8
+   batch_chunk: 1
+   log_interval: 100
+
+default:
+   train:
+      <<: *text8
+      <<: *model
+      <<: *boundaries
+      <<: *eval
+      <<: *optim
+      <<: *train

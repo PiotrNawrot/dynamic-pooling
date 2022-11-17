@@ -1,0 +1,6 @@
+numpy
+torch
+neptune-client
+tokenizers
+pdbpp
+sentencepiece
