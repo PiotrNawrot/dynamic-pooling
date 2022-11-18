@@ -5,3 +5,6 @@ pdbpp
 sentencepiece
 pyyaml
 datasets
+apache_beam
+tensorflow
+apache-beam[gcp]
