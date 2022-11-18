@@ -1,6 +1,7 @@
+torch==1.12.1+cu116
 numpy
-torch
 tokenizers
 pdbpp
 sentencepiece
 pyyaml
+datasets
