@@ -14,6 +14,7 @@ tokenizer_name = os.path.join('tokenizer_data', 'spm', dataset, tokenizer_name)
 
 os.makedirs(os.path.join('tokenizer_data', 'spm', dataset), exist_ok=True)
 os.chmod(os.path.join('tokenizer_data', 'spm', dataset), 0o777)
+
 print(f'I save the tokenizer at {tokenizer_name}')
 
 x = spm.SentencePieceTrainer.train(input=f'{prefix}',
