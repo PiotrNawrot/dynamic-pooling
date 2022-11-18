@@ -1,22 +1,31 @@
 # Efficient Transformers with Dynamic Token Pooling
 
-[**Environment**](#environment) | [**Data**](#data) | [**Training**](#training) | [**Repository**](#repository)
+![grab-landing-page](https://github.com/PiotrNawrot/dynamic-pooling/blob/main/media/dynamic_pooling.gif)
 
-Paper: TODO link
+[**Environment**](#environment) | [**Data**](#data) | [**Training**](#training) | [**Repository**](#repository) | [**Issues**](#issues) | [**Cite**](#cite)
+
+Paper: [Efficient Transformers with Dynamic Token Pooling](https://arxiv.org/abs/2211.09761)
 
 ## Environment:
 
 ```
+conda create -n dynamic-pooling python=3.8
 pip install -r requirements.txt
 ```
 
 ## Data:
-- Download
-    - `TODO` 
-- Preprocess
-    - `TODO` 
+- Download & preprocess
+    - text8
+        - `bash scripts/get_text8.sh` 
+    - wiki40b 
+        - `bash scripts/get_wiki40b.sh $lang`
+        - where $lang is for example `vi`
+        - check [Link](https://www.tensorflow.org/datasets/catalog/wiki40b) for how the abbreviation of other languages
+        - Script first downloads wiki40b under `./data/wiki40b/$lang/`, and then applies our cleaners on top of it based on [text8](http://mattmahoney.net/dc/textdata) cleaning rules. Final training data sits under `./data/wiki40b/$lang/text8`. We found that for some systems there might occur some errors when downloading wiki40b using `datasets`. In this case after you manage to get the data just apply our cleaners on it.
 - Train Unigram
-    - `TODO` 
+    - `python tokenizer_data/train_tokenizer.py $vocab_size $dataset`
+    - `$vocab_size` is the integer target vocab size of Unigram
+    - `$dataset` is `text8` for text8, `wiki40b/$lang` for wiki40b
 
 ## Training:
 - Training by default starts with a simple test that checks the autoregressive property of a model. We support grad accummulation, distributed training, half precision training.
@@ -50,4 +59,19 @@ We decided to fork from the Nvidia implementation of Transformer XL, because Tra
     - {Entropy, Gumbel}
         - These approaches are end-to-end and use the main model to train Boundary Predictor. Entire logic is implemented in the `hourglass.py`.
 
+## Issues:
 
+In case of any questions or problems with the codebase feel free to raise a Github Issue or contact me directly at: piotr.nawrot@ed.ac.uk
+
+## Cite:
+
+```
+@misc{nawrot2022dynamic,
+      title={Efficient Transformers with Dynamic Token Pooling},
+      author={Piotr Nawrot and Jan Chorowski and Adrian Łańcucki and Edoardo M. Ponti},
+      year={2022},
+      eprint={2211.09761},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
