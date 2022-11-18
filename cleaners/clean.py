@@ -9,7 +9,7 @@ from utils import wiki40b_markers, change_unknowns, collapse_whitespace, collaps
 def text8_cleaner(text, lang):
     text = wiki40b_markers(text, mode='remove')
 
-    if lang is not 'he':
+    if lang != 'he':
         text = normalise_homoglyphs(text)
 
     text = text.lower()
