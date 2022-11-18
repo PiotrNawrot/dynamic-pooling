@@ -30,7 +30,6 @@ import inspect
 
 from torch.nn.parallel import DistributedDataParallel
 
-import neptune.new as neptune
 import utils
 from data_utils import get_lm_corpus
 from hourglass import MemTransformerLM
@@ -39,7 +38,6 @@ from utils.distributed import print_once
 from test import autoregressive_test
 
 
-run = None
 np.set_printoptions(suppress=True)
 
 
@@ -369,14 +367,6 @@ def train(tr_iter, va_iter, model, model_config, optimizer,
 
             print_once(log_str, args)
 
-            if run:
-                run['lr'].log(lr, step=train_step)
-                run['train/loss'].log(cur_loss, step=train_step)
-                run['tokens_per_sec'].log(throughput, step=train_step)
-                for k, v in stats_agg.items():
-                    run[k].log(np.array(v).mean(), step=train_step)
-                stats_agg = defaultdict(list)
-
         do_periodic_eval = train_step % args.eval_interval == 0
         is_final_step = train_step == args.max_step
 
@@ -385,16 +375,6 @@ def train(tr_iter, va_iter, model, model_config, optimizer,
 
             val_loss, stats_val = evaluate(va_iter, model, args)
             val_loss = utils.distributed.all_reduce_item(val_loss, op='mean')
-
-            if run:
-                run[f"val/loss_tgt{args.eval_tgt_len}_total{args.eval_total_len}"].log(
-                    val_loss, step=train_step
-                )
-                for k, v in stats_val.items():
-                    run[f"val/{k}"].log(np.array(v).mean(), step=train_step)
-
-            if run:
-                run['val/loss'].log(val_loss, step=train_step)
 
             print_once('-' * 100, args)
             log_str = '| Eval {:3d} at step {:>8d} | time: {:5.2f}s ' \
@@ -519,16 +499,6 @@ def main():
     if args.fp16:
         scaler = torch.cuda.amp.GradScaler()
 
-    # Log training and model args
-    if rank == 0:
-        # Neptune
-        global run
-        run = neptune.init('syzymon/hourglass-pytorch')
-        run['args'] = vars(args)
-        run['branch'] = os.getenv('TRAX_BRANCH')
-        run['exp_path'] = os.getenv('EXPERIMENT_PATH')
-        run['slurm_jobid'] = os.getenv('SLURM_JOB_ID')
-
     if rank == 0:
         print(model)
         print('=' * 100)
@@ -569,17 +539,9 @@ def main():
     test_loss, stats_test = evaluate(te_iter, model, args)
     test_loss = utils.distributed.all_reduce_item(test_loss, op='mean')
 
-    if run:
-        run[f'test/loss_tgt{args.eval_tgt_len}_total{args.eval_total_len}'].log(test_loss, step=train_step)
-        for k, v in stats_test.items():
-            run[f'test/{k}'].log(np.array(v).mean(), step=train_step)
-
     print_once('| End of training | test loss {:5.2f} | test bpc {:9.5f}'.format(
         test_loss, test_loss / math.log(2)), args
     )
-
-    if run:
-        run['test_loss'].log(test_loss, step=train_step)
 
 
 if __name__ == "__main__":
