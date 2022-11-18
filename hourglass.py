@@ -489,11 +489,11 @@ class MemTransformerLM(nn.Module):
 
                     target_boundaries = self.get_spikes(entropy).transpose(0, 1)
                     # target_boundaries: B x T
-                elif self.boundaries_type in ['unigram']:
+                elif self.boundaries_type == 'unigram':
                     # T x B
                     target_boundaries = boundaries_gt[-tgt_len:].transpose(0, 1)
                     # B x T
-                else:
+                elif self.boundaries_type == 'gumbel':
                     target_boundaries = None
 
                 soft_boundaries = soft_boundaries[:, -tgt_len:]
@@ -518,7 +518,7 @@ class MemTransformerLM(nn.Module):
                     )
 
                     bp_stats = self.boundary_predictor.calc_stats(
-                        hard_boundaries, (data == 0).transpose(0, 1)
+                        hard_boundaries, (data == 0)[-tgt_len:].transpose(0, 1)
                     )
 
                     for k, v in bp_stats.items():
