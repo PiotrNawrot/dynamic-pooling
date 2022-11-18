@@ -3,4 +3,4 @@ torch
 tokenizers
 pdbpp
 sentencepiece
-yaml
+pyyaml
