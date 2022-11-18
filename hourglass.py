@@ -260,6 +260,7 @@ class BoundaryPredictor(nn.Module):
         return soft_boundaries, hard_boundaries
 
     def calc_loss(self, preds, gt):
+        # B x T
         if self.bp_type in ['entropy', 'unigram']:
             assert preds is not None and gt is not None
             return self.loss(preds, gt.float())
@@ -276,6 +277,7 @@ class BoundaryPredictor(nn.Module):
             return loss_boundaries
 
     def calc_stats(self, preds, gt):
+        # B x T
         preds, gt = preds.bool(), gt.bool()
         TP = ((preds == gt) & preds).sum().item()
         FP = ((preds != gt) & preds).sum().item()
@@ -432,9 +434,12 @@ class MemTransformerLM(nn.Module):
                 residual = hidden
 
                 if self.boundaries_type in ['fixed', 'whitespaces']:
+                    # T x B
                     hard_boundaries = boundaries_gt.float().transpose(0, 1)
+                    # B x T
                 else:
                     soft_boundaries, hard_boundaries = self.boundary_predictor(hidden)
+                    # B x T
 
                 hidden = downsample(
                     boundaries=hard_boundaries,
@@ -480,15 +485,19 @@ class MemTransformerLM(nn.Module):
                     ) * torch.nn.functional.softmax(logit, dim=-1)
 
                     entropy = torch.sum(entropy, dim=-1)
+                    # T x B
 
                     target_boundaries = self.get_spikes(entropy).transpose(0, 1)
+                    # target_boundaries: B x T
                 elif self.boundaries_type in ['unigram']:
-                    target_boundaries = boundaries_gt.transpose(0, 1)[-tgt_len:]
+                    # T x B
+                    target_boundaries = boundaries_gt[-tgt_len:].transpose(0, 1)
+                    # B x T
                 else:
                     target_boundaries = None
 
-                soft_boundaries = soft_boundaries[-tgt_len:]
-                hard_boundaries = hard_boundaries[-tgt_len:]
+                soft_boundaries = soft_boundaries[:, -tgt_len:]
+                hard_boundaries = hard_boundaries[:, -tgt_len:]
 
                 if self.boundaries_type in ['unigram', 'entropy']:
                     assert target_boundaries.sum().item() > 0
