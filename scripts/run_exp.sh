@@ -2,8 +2,6 @@
 
 echo 'Run training...'
 
-GPUS=
-
 if [ -z $GPUS ]
 then
     python train.py --config_file "$C"
