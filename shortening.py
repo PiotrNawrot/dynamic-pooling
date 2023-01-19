@@ -23,10 +23,12 @@ def common(boundaries, upsample=False):
     boundaries = boundaries.clone()
 
     n_segments = boundaries.sum(dim=-1).max().item()
-    assert n_segments > 0
 
     if upsample:
         n_segments += 1
+
+    if n_segments == 0:
+        return None
 
     tmp = torch.zeros_like(
         boundaries
@@ -63,14 +65,18 @@ def downsample(boundaries, hidden, null_group):
     """
 
     foo = common(boundaries, upsample=False)  # B x L x S
-    bar = final(foo=foo, upsample=False)  # B x L x S
 
-    shortened_hidden = torch.einsum('lbd,bls->sbd', hidden, bar)
-    shortened_hidden = torch.cat(
-        [null_group.repeat(1, hidden.size(1), 1), shortened_hidden], dim=0
-    )
+    if foo is None:
+        return null_group.repeat(1, hidden.size(1), 1)
+    else:
+        bar = final(foo=foo, upsample=False)  # B x L x S
 
-    return shortened_hidden
+        shortened_hidden = torch.einsum('lbd,bls->sbd', hidden, bar)
+        shortened_hidden = torch.cat(
+            [null_group.repeat(1, hidden.size(1), 1), shortened_hidden], dim=0
+        )
+
+        return shortened_hidden
 
 
 def upsample(boundaries, shortened_hidden):
