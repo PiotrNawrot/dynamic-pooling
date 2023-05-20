@@ -1,6 +1,6 @@
 wiki40b: &wiki40b
    dataset: wiki40b
-   data: data/wiki40b/vi/text8
+   data: data/wiki40b/he/text8
 
 model: &model
    d_model: 512
@@ -18,8 +18,8 @@ model: &model
    fp16: true 
 
 boundaries: &boundaries
-   boundaries_type: 'gumbel'
-   tokenizer_path: './tokenizer_data/spm/wiki40b/spmunigram-5000.model'
+   boundaries_type: 'unigram'
+   tokenizer_path: './tokenizer_data/spm/wiki40b/he/text8/spmunigram-5000.model'
    fixed_sf: 2
    spikes_left: 2
    temp: 0.5

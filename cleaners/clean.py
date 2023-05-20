@@ -3,13 +3,18 @@ import sys
 
 from homoglyphs import normalise_homoglyphs
 from alphabet_numerals import spellout_digits, keep_whitelist
-from utils import wiki40b_markers, change_unknowns, collapse_whitespace, collapse_unknowns
+from utils import (
+    wiki40b_markers,
+    change_unknowns,
+    collapse_whitespace,
+    collapse_unknowns,
+)
 
 
 def text8_cleaner(text, lang):
     text = wiki40b_markers(text, mode='remove')
 
-    if lang != 'he':
+    if not lang.startswith('he'):
         text = normalise_homoglyphs(text)
 
     text = text.lower()
@@ -19,6 +24,7 @@ def text8_cleaner(text, lang):
 
     text = collapse_whitespace(text)
     text = text.strip()
+
     return text
 
 

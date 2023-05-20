@@ -5,7 +5,7 @@ alphabet = {
     'fi': 'abcdefghijklmnopqrstuvwxyzåäö\n',
     'vi': 'abcdeghiklmnopqrstuvxyăâđêôơư\náàảãạăắằẳẵặâấầẩẫậđéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ',
     'tr': 'aeıioöuübcçdfgğhjklmnprsştvyz\n',
-    'he': 'אבגדהוזחטיכלמנסעפצקרשׂשׁתםן\nךףץְֱֲִֵֶַָֹֻּ'
+    'he': 'חמודאזש״עצתךרל־׳סנגןקםבכטץהפיף\n', # No diacritics
 }
 
 numerals = {

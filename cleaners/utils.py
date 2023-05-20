@@ -39,14 +39,16 @@ def wiki40b_markers(text, mode):
             assert special not in text
             text = text.replace(marker, f' {special} ')
         elif mode == 'remove':
-            text = text.replace(marker, ' ')
+            text = text.replace(marker, '\n')
 
     return text
 
 
 def collapse_whitespace(text):
     # It doesn't collapse/remove endlines, only whitespaces
-    return re.sub(re.compile(r' +'), ' ', text)
+    text = re.sub(re.compile(r' +'), ' ', text)
+    text = re.sub(re.compile(r'( *[\n]+ *)+'), '\n', text)
+    return text
 
 
 def collapse_unknowns(text):

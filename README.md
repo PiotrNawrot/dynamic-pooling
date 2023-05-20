@@ -25,14 +25,14 @@ pip install -r requirements.txt
 - Train Unigram
     - `python tokenizer_data/train_tokenizer.py $vocab_size $dataset`
     - `$vocab_size` is the integer target vocab size of Unigram
-    - `$dataset` is `text8` for text8, `wiki40b/$lang` for wiki40b
+    - `$dataset` is `text8` for text8, `wiki40b/$lang/text8` for wiki40b
 
 ## Training:
 - Training by default starts with a simple test that checks the autoregressive property of a model. We support grad accummulation, distributed training, half precision training.
 
 - To run training use:
 ```
-C=configs/spaces.yaml GPUS= bash scripts/run_exp.sh
+C=configs/whitespaces.yaml GPUS= bash scripts/run_exp.sh
 ```
     - C -> defines the path to the config 
     - GPUS -> defines the number of GPUs for distributed run, when not given then the training runs on a single GPU/CPU
